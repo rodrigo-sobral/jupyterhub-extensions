@@ -70,6 +70,8 @@ def define_SwanSpawner_from(base_class):
 
         eos_special_type = 'eos'
 
+        builders_demand_repository = ('accpy',)
+
         options_form_config = Unicode(
             config=True,
             help='Path to configuration file for options_form rendering.'
@@ -260,10 +262,6 @@ def define_SwanSpawner_from(base_class):
             options[self.file]                      = formdata.get(self.file, [''])[0]
 
             if options[self.software_source] == self.customenv_special_type:
-                options[self.repository] = formdata[self.repository][0]
-                if not options[self.repository]:
-                    raise ValueError('Cannot create custom software environment: no repository specified')
-
                 # Builders can have a version or not. When they do, we receive the following text from the form: builder:builder_version
                 options[self.builder] = formdata.get(self.builder, [''])[0].lower()
                 selection = self._get_selection(options_form_config, options, self.builder)
@@ -273,6 +271,10 @@ def define_SwanSpawner_from(base_class):
 
                 if options[self.builder].count(':') == 1:
                     options[self.builder], options[self.builder_version] = options[self.builder].split(':')
+
+                options[self.repository] = formdata.get(self.repository, [''])[0]
+                if not options[self.repository] and options[self.builder] in self.builders_demand_repository:
+                    raise ValueError('Cannot create custom software environment: no repository specified')
             elif options[self.software_source] == self.lcg_special_type:
                 options[self.lcg_rel_field]             = formdata[self.lcg_rel_field][0]
                 options[self.platform_field]            = formdata[self.platform_field][0]
