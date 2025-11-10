@@ -196,14 +196,16 @@ class SpawnHandler(JHSpawnHandler):
         if options.get(configs.software_source) == configs.customenv_special_type:
             # Add the query arguments to the URL
             query_params = {
-                configs.repository: options.get(configs.repository),
+                configs.repository: options.get(configs.repository, ''),
                 configs.builder: options.get(configs.builder),
                 configs.file: options.get(configs.file, ''),
             }
             # If the builder has a version, pass it as an argument of the query
             if options.get(configs.builder_version):
                 query_params[configs.builder_version] = options[configs.builder_version]
-            if options.get(configs.spark_cluster_field, "none") != "none":
+            elif options.get(configs.lcg_rel_field):
+                query_params[configs.builder], query_params[configs.builder_version] = options[configs.lcg_rel_field].split('-')
+            if options.get(configs.spark_cluster_field, "none") == "hadoop-nxcals":
                 query_params["nxcals"] = True
 
             # Execution SwanCustomEnvs extension with the corresponding query arguments

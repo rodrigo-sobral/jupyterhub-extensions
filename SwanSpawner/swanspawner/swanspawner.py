@@ -72,6 +72,8 @@ def define_SwanSpawner_from(base_class):
 
         builders_demand_repository = ('accpy',)
 
+        lcg_stacks_for_customenvs = ('lhcb',)
+
         options_form_config = Unicode(
             config=True,
             help='Path to configuration file for options_form rendering.'
@@ -286,6 +288,8 @@ def define_SwanSpawner_from(base_class):
 
                 # Validate user selected options with what is on the yaml form    
                 self._validate_selection_options(selection, options)
+                if options[self.lcg_rel_field].split("-")[0] in self.lcg_stacks_for_customenvs:
+                    options[self.software_source] = self.customenv_special_type
             else:
                 self._popup_error(options, self.software_source)
 
