@@ -30,8 +30,14 @@ jobs:
 
       - name: Install dependencies 📦
         run: |
-          uv pip install --group dev
+          uv pip install pytest --group dev
 
       - name: Lint code 🧹
         run: |
           uv run --no-project ruff check .
+
+      - name: Test code 🧪
+        run: |
+          if [ -d "tests" ]; then
+            SWANHUB_ENV=dev pytest tests/
+          fi
